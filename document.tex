@@ -96,14 +96,14 @@ This exactly matches the probability in the Jukes-Cantor model. Since the base $
 Given the probabilities $p_{A,A}$ and $p_{A,A^c}$ we can further compute quantities of interest for sequences instead of one single base. 
 Let $s_0$ be a DNA sequence and $s_1$ be a second sequence that results from $s_0$ from mutation, given an expected number of mutations per base of $\mu t$. For this, we write $s_0\xrightarrow[]{\mu t} s_1$. Furthermore, we use $|s_0 -s_1|$ to quantify the number of miss matches between $s_0$ and $s_1$. I.e. $|s_0-s_1|=k$ implying miss matches at $k\leq n$ positions.
 
-We can now compute the probability of $s_0$ mutating into \textit{any} $s_1$, observing $|s_0-s_1|=k$. When we observe miss matches at $k$ positions, the sequences have to be equal at $n-k$ positions. Furthermore, there are $\binom{n}{k}$ ways to arrange the $k$ miss matches. Per position that does not match, there are 3 possible bases to fill this position with. Thus in total
+We can now compute the probability of $s_0$ mutating into \textit{any} $s_1$, observing $|s_0-s_1|=k$. When we observe miss matches at $k$ positions, the sequences have to be equal at $n-k$ positions. Furthermore, there are $\binom{n}{k}$ ways to arrange the $k$ miss matches. Thus in total
 \begin{align}
-	p(s_0 \xrightarrow[]{\mu t} \text{ any } s_1 \text{ s.th. } |s_0-s_1|=k) =3^k \binom{n}{k} \, \cdot  \left(1-p_{A,A}\right)^{k}\cdot p_{A,A}^{n-k} \label{eq:s0s1}
+	p(s_0 \xrightarrow[]{\mu t} \text{ any } s_1 \text{ s.th. } |s_0-s_1|=k) =\binom{n}{k} \, \cdot  \left(1-p_{A,A}\right)^{k}\cdot p_{A,A}^{n-k} \label{eq:s0s1}
 \end{align}
 Similarly, we can compute the probability of some $s_1$ and $s_2$ having difference $k$, assuming they both resulted from two instances of the same sequence $s_0$ due to mutation. Then $s_1$ and $s_2$ have a matching base if they either both do not see a mutation at that position or if the mutation is of the same type for both, e.g. $A\rightarrow C$, $A\rightarrow G$, or $A\rightarrow T$. Then
 \begin{align}
 p(s_0 \xrightarrow[]{\mu t} \text{ any } s_1  \wedge s_0 \xrightarrow[]{\mu t} \text{ any } s_2  \text{ s.th. } |s_1-s_2|=k) \nonumber \\
- = 3^k\binom{n}{k} \, \cdot \left(1-p_{A,A}^2 -3p_{A,C}^2\right)^{k}\cdot \left(p_{A,A}^2 +3p_{A,C}^2\right)^{n-k},\label{eq:s1s2}
+ = \binom{n}{k} \, \cdot \left(1-p_{A,A}^2 -3p_{A,C}^2\right)^{k}\cdot \left(p_{A,A}^2 +3p_{A,C}^2\right)^{n-k},\label{eq:s1s2}
 \end{align}
 where we write $3p_{A,C}^2$ since $p_{A,C} = p_{A,G}=p_{A,T}$. Again, the choice of $A$ as the origin base does not alter the result. The processes modeled by Eq. \eqref{eq:s0s1} and \eqref{eq:s1s2} are similar in the sense that the second process can be modeled via the first process when doubling the number of expected mutations or equivalently doubling the time while keeping the mutation rate. Indeed, we can verify\footnote{See Appendix for proof.}
 \begin{align}
@@ -123,6 +123,10 @@ Differentiating, setting equal to zero and equating for $\mu t$ yields
 	\mu t_{MLE} = -\frac34 \log \left(1-\frac43 \frac{k}{n}\right),
 \end{align}
 for which the real and imaginary part are plotted in Fig. \ref{fig:distancemeasure}.
+By Taylor ($k/n$ small) we obtain
+\begin{align}
+\mu t_{MLE} \approx \frac{k}{n}.
+\end{align}
 
 If we define 
 \begin{align}
@@ -168,8 +172,8 @@ With $g(\mu t)$ being the density of $\mu t$ is the prior. If $g$ is constant, t
 
 \begin{figure}
 	\centering
-	\includegraphics[width=1.0\linewidth]{distancemeasure}
-	\caption{Real part (blue) and Imag part (orange). With $g(\mu t,n,k) = p_{A,A}(\mu t)^{n-k} (1-p_{A,A}(\mu t))^k$, we obtain $d$ by differentiating the expression w.r.t $\mu t$ and setting it to zero. I.e. it is the argmax of the expression, meaning the most likely number of expected mutations that yield the observed deviation of two sequences. The expression becomes imaginary for $k\geq 3/4n$ (and diverges for $k=3/4n$). Interestingly, $3/4n$ is also the most likely number of observed miss matches when letting one sequence mutate "for ever". Thus having more than 3/4n miss matches could imply some information loss after which it is no longer reasonable to assume that the two sequences are related? I.e. it there is a higher number of miss matches than what to expect when picking sequences randomly. {\color{red}Note that this is also the exact distance measure as in the JC69 model but with a completely different argumentation.}
+	\includegraphics[width=1.0\linewidth]{Screenshot_20181205_140634}
+	\caption{Real part (blue) and Imag part (orange). With $g(\mu t,n,k) = p_{A,A}(\mu t)^{n-k} (1-p_{A,A}(\mu t))^k/3^k$, we obtain $d$ by differentiating the expression w.r.t $\mu t$ and setting it to zero. I.e. it is the argmax of the expression, meaning the most likely number of expected mutations that yield the observed deviation of two sequences. The expression becomes imaginary for $k\geq 3/4n$ (and diverges for $k=3/4n$). Interestingly, $3/4n$ is also the most likely number of observed miss matches when letting one sequence mutate "for ever". Thus having more than 3/4n miss matches could imply some information loss after which it is no longer reasonable to assume that the two sequences are related? I.e. it there is a higher number of miss matches than what to expect when picking sequences randomly. {\color{red}Note that this is also the exact distance measure as in the JC69 model but with a completely different argumentation.}
 	Note2: This can be interpreted as the time we have to wait (given a fixed rate $\mu$) that we have to wait until we observe $k$ miss matches w.r.t original sequence. Since the state of highest entropy is a equal number of bases ($A,C,G,T$), observing more than $3/4n$ miss matches would mean that the entropy would start to decrease again. How is $d$ then related to entropy? }
 	\label{fig:distancemeasure}
 \end{figure}
